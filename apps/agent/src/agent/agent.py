@@ -1,10 +1,10 @@
 # Target : CPU : 40% | RAM : 2.1/4GB | DISK : 60% full
 import time
+import psutil
 
 while True:
-    import psutil
 
-    cpu = psutil.cpu_percent(0.1)
+    cpu = psutil.cpu_percent(1)
 
     ram = psutil.virtual_memory()
     ram_total = round(ram.total / (1024 ** 3), 1)
