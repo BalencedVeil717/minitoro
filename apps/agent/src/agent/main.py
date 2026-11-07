@@ -1,9 +1,9 @@
 # Target : CPU : 40% | RAM : 2.1/4GB | DISK : 60% full
-import time
+import json
 import psutil
 
-while True:
 
+def generate_data():
     cpu = psutil.cpu_percent(1)
 
     ram = psutil.virtual_memory()
@@ -14,4 +14,11 @@ while True:
 
     print(f"CPU : {cpu}% | RAM : {ram_used}/{ram_total}GB | Disk : {disk}% full")
 
-    time.sleep(60)
+    data = {
+        'cpu_percentage': cpu,
+        'ram_used': ram_used,
+        'ram_total': ram_total,
+        'disk_percentage': disk,
+    }
+    return json.dumps(data)
+

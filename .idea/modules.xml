@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/agent.iml" filepath="$PROJECT_DIR$/.idea/agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/api.iml" filepath="$PROJECT_DIR$/.idea/api.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/minitoro.iml" filepath="$PROJECT_DIR$/.idea/minitoro.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/minitoro-core.iml" filepath="$PROJECT_DIR$/.idea/minitoro-core.iml" />
     </modules>
