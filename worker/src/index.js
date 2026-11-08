@@ -27,8 +27,25 @@ export default {
 			console.log("API Down :" + err)
 		}
 		console.log(state);
-	},
+		const webhook_response = await fetch(env.WEBHOOK_URL, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				"content": "Hello"
+			})
+		});
+		if (webhook_response.ok) {
+			console.log("Message sent successfully");
+		} else {
+			console.error(`Error: ${webhook_response.status} ${webhook_response.statusText}`);
+		}
+	}
+	,
 	async fetch(request, env, ctx) {
 		return new Response("Hello Nova!");
-	},
-};
+	}
+	,
+}
+;
