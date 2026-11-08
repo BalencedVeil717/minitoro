@@ -35,9 +35,8 @@ if __name__ == "__main__":
             response = requests.post(url, json=data, timeout=5)
             if response.status_code == 200:
                 print(response.text)
-            elif response.status_code in (402, 500):
-                continue
+            elif response.status_code in (422, 500):
+                print("Error Occurred")
         except ConnectionError:
             print("Connection Error")
-            break
         time.sleep(60)
