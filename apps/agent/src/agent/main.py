@@ -1,6 +1,9 @@
 # Target : CPU : 40% | RAM : 2.1/4GB | DISK : 60% full
-import json
+import time
+
 import psutil
+import requests
+from requests import ConnectionError
 
 
 def generate_data():
@@ -14,11 +17,27 @@ def generate_data():
 
     print(f"CPU : {cpu}% | RAM : {ram_used}/{ram_total}GB | Disk : {disk}% full")
 
-    data = {
+    metric_data = {
         'cpu_percentage': cpu,
         'ram_used': ram_used,
         'ram_total': ram_total,
         'disk_percentage': disk,
     }
-    return json.dumps(data)
+    return metric_data
 
+
+if __name__ == "__main__":
+    while True:
+        url = "http://127.0.0.1:8000/metrics"
+        data = generate_data()
+
+        try:
+            response = requests.post(url, json=data, timeout=5)
+            if response.status_code == 200:
+                print(response.text)
+            elif response.status_code in (402, 500):
+                continue
+        except ConnectionError:
+            print("Connection Error")
+            break
+        time.sleep(60)

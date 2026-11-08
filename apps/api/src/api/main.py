@@ -27,4 +27,5 @@ def exec_metric(metric: Metric):
 def read_metric():
     if metric_data is None:
         raise HTTPException(status_code=404, detail="Metric not found")
-    return metric_data
+    else:
+        return metric_data
