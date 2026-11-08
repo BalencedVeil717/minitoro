@@ -33,7 +33,7 @@ export default {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				"content": "Hello"
+				"content": state
 			})
 		});
 		if (webhook_response.ok) {
