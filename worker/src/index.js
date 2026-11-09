@@ -1,8 +1,7 @@
-const limit_seconds = 180;
-
 export default {
 	async scheduled(controller, env, ctx) {
 		let state = "";
+		const states = ["no_data", "stale", "ok"];
 		console.log("cron processed");
 		const url = "http://127.0.0.1:8000/lastcall";
 		try {
@@ -11,36 +10,36 @@ export default {
 				throw new Error("Failed to fetch lastcall :" + response.status);
 			}
 			const data = await response.json();
-			if (data.status === "no_data") {
-				state = data.status;
-			} else if (data.status === "ok" && typeof data.last_call == "number") {
-				if (data.last_call > limit_seconds) {
-					state = "stale";
-				} else {
-					state = "ok";
-				}
-			} else {
+			if (!(data.status in states)) {
 				state = "unknown";
+			} else {
+				state = data.status;
 			}
+
 		} catch (err) {
 			state = "api_down";
-			console.log("API Down :" + err)
+			console.error(`API Down : ${err}`);
 		}
 		console.log(state);
-		const webhook_response = await fetch(env.WEBHOOK_URL, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				"content": state
-			})
-		});
-		if (webhook_response.ok) {
-			console.log("Message sent successfully");
-		} else {
-			console.error(`Error: ${webhook_response.status} ${webhook_response.statusText}`);
+		let message = {
+			"content": state
+		};
+		try {
+			const webhook_response = await fetch(env.WEBHOOK_URL, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(message)
+			});
+
+			if (!webhook_response.ok) {
+				throw new Error(`Discord webhook error: ${webhook_response.status} ${webhook_response.statusText}`);
+			}
+		} catch (err) {
+			console.error(err);
 		}
+
 	}
 	,
 	async fetch(request, env, ctx) {
