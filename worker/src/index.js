@@ -16,7 +16,7 @@ function get_message(state, last_state, err = null) {
 		case "ok":
 			if (last_state === "stale") {
 				return "### The agent is sending data again.";
-			} else if(last_state === "api_down") {
+			} else if (last_state === "api_down") {
 				return "### The API is up and running."
 			}
 			return "### The agent is alive and working."
@@ -109,6 +109,11 @@ export default {
 			} catch (e) {
 				console.error(e);
 			}
+		}
+		try {
+			await fetch(env.HEALTHCHECKS_URL,{method: "GET", signal: AbortSignal.timeout(5000)});
+		} catch (e) {
+			console.error(`Error pinging HEALTHCHECKS_URL: ${e}`);
 		}
 	},
 	async fetch(request, env, ctx) {
