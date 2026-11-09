@@ -17,8 +17,8 @@ class Metric(BaseModel):
     disk_percentage: int
 
 
-metric_data = None
-call_time = None
+metric_data: Metric | None = None
+call_time: int | None = None
 
 
 @app.post("/metrics")
@@ -42,6 +42,12 @@ def read_last_call():
         return {"status": "no_data",
                 "last_call": None}
     last_call = round(time.monotonic() - call_time)
-    return {"status": "ok",
+    if last_call > 180:
+        return {
+            "status": "stale",
             "last_call": last_call
-            }
+        }
+    else:
+        return {"status": "ok",
+                "last_call": last_call
+                }
