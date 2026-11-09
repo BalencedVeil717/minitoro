@@ -9,5 +9,11 @@
 		"crons": [
 			"* * * * *"
 		]
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "state",
+			"id": "21ea24cac81440e08f8f26610da902b2"
+		}
+	]
 }
