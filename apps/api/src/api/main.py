@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
+time_limit = 180
 
 
 @app.get("/")
@@ -18,7 +19,7 @@ class Metric(BaseModel):
 
 
 metric_data: Metric | None = None
-call_time: int | None = None
+call_time: float | None = None
 
 
 @app.post("/metrics")
@@ -39,15 +40,9 @@ def read_metric():
 @app.get("/lastcall")
 def read_last_call():
     if call_time is None:
-        return {"status": "no_data",
-                "last_call": None}
+        return {"status": "no_data"}
     last_call = round(time.monotonic() - call_time)
-    if last_call > 180:
-        return {
-            "status": "stale",
-            "last_call": last_call
-        }
+    if last_call > time_limit:
+        return {"status": "stale"}
     else:
-        return {"status": "ok",
-                "last_call": last_call
-                }
+        return {"status": "ok"}
