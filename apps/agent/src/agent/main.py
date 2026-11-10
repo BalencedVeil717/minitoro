@@ -3,7 +3,7 @@ import time
 
 import psutil
 import requests
-from requests import ConnectionError
+from requests import ConnectionError, Timeout
 
 
 def generate_data():
@@ -37,6 +37,8 @@ if __name__ == "__main__":
                 print(response.text)
             elif response.status_code in (422, 500):
                 print("Error Occurred")
+        except Timeout:
+            print("Timeout Error Occurred")
         except ConnectionError:
-            print("Connection Error")
+            print("Connection Error Occurred")
         time.sleep(60)
