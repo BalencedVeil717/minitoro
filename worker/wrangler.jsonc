@@ -2,6 +2,7 @@
 	"name": "minitoro-watcher",
 	"main": "src/index.js",
 	"compatibility_date": "2026-11-08",
+	"workers_dev": false,
 	"observability": {
 		"enabled": true
 	},
@@ -15,5 +16,8 @@
 			"binding": "state",
 			"id": "21ea24cac81440e08f8f26610da902b2"
 		}
-	]
+	],
+	"vars": {
+		"API_URL": "https://minecraft-vm.uaenorth.cloudapp.azure.com/lastcall"
+	}
 }

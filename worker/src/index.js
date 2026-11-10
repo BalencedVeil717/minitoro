@@ -1,4 +1,3 @@
-const url = "http://127.0.0.1:8000/lastcall";
 const retries = 2;
 const allowed_states = ["ok", "stale", "no_data"];
 
@@ -25,8 +24,8 @@ function get_message(state, last_state, err = null) {
 	}
 }
 
-async function fetch_api_state() {
-	const response = await fetch(url, {method: "GET", signal: AbortSignal.timeout(5000)});
+async function fetch_api_state(api_url) {
+	const response = await fetch(api_url, {method: "GET", signal: AbortSignal.timeout(5000)});
 	if (!response.ok) {
 		throw new Error(`Error fetching lastcall: ${response.status} ${response.statusText}`);
 	}
@@ -60,7 +59,7 @@ export default {
 		while (i <= retries) {
 			console.log(`Attempt : ${i}`);
 			try {
-				api_state = await fetch_api_state();
+				api_state = await fetch_api_state(env.API_URL);
 				break;
 			} catch (e) {
 				api_state = "api_down"
