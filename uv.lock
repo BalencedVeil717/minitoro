@@ -295,10 +295,14 @@ version = "0.1.0"
 source = { editable = "apps/bot" }
 dependencies = [
     { name = "discord-py" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "discord-py", specifier = ">=2.7.1" }]
+requires-dist = [
+    { name = "discord-py", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.2.4" },
+]
 
 [[package]]
 name = "certifi"
