@@ -2,7 +2,7 @@
 <module external.system.id="pyproject.toml" type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/apps/bot">
-      <sourceFolder url="file://$MODULE_DIR$/apps/bot/src" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/bot/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="V:\Github\minitoro\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
