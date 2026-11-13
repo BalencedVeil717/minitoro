@@ -1,0 +1,18 @@
+[Unit]
+Description=Minitoro Metrics Agent
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+
+[Service]
+User=minitoro-bot
+WorkingDirectory=/opt/minitoro
+EnvironmentFile=/etc/minitoro/bot.env
+ExecStart=/opt/minitoro/.venv/bin/python -u -m bot.main
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

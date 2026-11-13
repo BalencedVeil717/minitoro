@@ -1,0 +1,13 @@
+[Unit]
+Description=Minitoro Metrics Agent
+After=minitoro-api.service
+
+[Service]
+User=minitoro
+WorkingDirectory=/opt/minitoro
+ExecStart=/opt/minitoro/.venv/bin/python -u -m agent.main
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Minitoro API Endpoint
+After=network.target
+
+[Service]
+User=minitoro
+WorkingDirectory=/opt/minitoro
+ExecStart=/opt/minitoro/.venv/bin/fastapi run --host 127.0.0.1
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
