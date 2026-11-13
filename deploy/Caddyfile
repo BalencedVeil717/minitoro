@@ -1,0 +1,14 @@
+minecraft-vm.uaenorth.cloudapp.azure.com {
+	@lastcall {
+		path /lastcall
+		method GET
+	}
+
+	handle @lastcall {
+		reverse_proxy 127.0.0.1:8000
+	}
+
+	handle {
+		respond "Not Found" 404
+	}
+}
