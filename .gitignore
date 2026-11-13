@@ -1,1 +1,5 @@
+# Local environment
 .env
+
+# Local Minecraft data
+/minecraft/
