@@ -1,4 +1,3 @@
-# Target : CPU : 40% | RAM : 2.1/4GB | DISK : 60% full
 import time
 
 import psutil
