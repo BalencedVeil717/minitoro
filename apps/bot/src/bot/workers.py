@@ -1,4 +1,5 @@
 import json
+import pathlib
 
 
 async def reload_uuid(minecraft_dir) -> None:
@@ -24,3 +25,17 @@ async def reload_uuid(minecraft_dir) -> None:
                 uuids.append(data["uuid"])
 
         json.dump(player_hash, phash, indent=4)
+
+async def get_players(minecraft_dir: pathlib.Path) -> list[str]:
+    player_hash_file = minecraft_dir / "player_hash.json"
+
+    if not player_hash_file.is_file():
+        print(f"Files not found {player_hash_file}")
+
+    try:
+        players = json.loads(player_hash_file.read_text()).keys()
+    except json.decoder.JSONDecodeError:
+        print("Cannot load player_hash.json")
+        players = []
+
+    return players
