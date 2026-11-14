@@ -3,6 +3,8 @@ import discord
 import httpx
 from discord.ext import commands
 from dotenv import load_dotenv
+from pathlib import Path
+from workers import reload_uuid
 
 load_dotenv()
 
@@ -10,6 +12,9 @@ intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
+minecraft_dir = Path(os.getenv("MINITORO_MINECRAFT_DIR", "")).resolve()
+if not minecraft_dir.is_dir():
+    raise RuntimeError(f"Invalid minecraft directory: {minecraft_dir}")
 
 
 @bot.event
@@ -45,6 +50,16 @@ async def metrics(interaction: discord.Interaction) -> None:
         return
 
     await interaction.followup.send(message)
+
+
+@tree.command(name="reload_hashes", description="Reload the uuid for players")
+async def reload_hashes(interaction: discord.Interaction) -> None:
+    await interaction.response.defer(ephemeral=True)
+    try:
+        await reload_uuid(minecraft_dir)
+        await interaction.followup.send(f"Successfully reloaded hashes for {minecraft_dir}", ephemeral=True)
+    except Exception as err:
+        await interaction.followup.send(f"Error reloading hashes for {minecraft_dir}\nError: {err}", ephemeral=True)
 
 
 try:
