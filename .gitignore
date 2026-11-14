@@ -2,4 +2,4 @@
 .env
 
 # Local Minecraft data
-/minecraft/
+/apps/bot/minecraft/
