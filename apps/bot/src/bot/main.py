@@ -14,8 +14,10 @@ intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
+if not os.getenv("MINITORO_MINECRAFT_DIR", ""):
+    raise FileNotFoundError("Cannot load minecraft directory")
 minecraft_dir = Path(os.getenv("MINITORO_MINECRAFT_DIR", "")).resolve()
-if not minecraft_dir and not minecraft_dir.is_dir():
+if not minecraft_dir.is_dir():
     raise RuntimeError(f"Invalid minecraft directory: {minecraft_dir}")
 
 
