@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/agent.iml" filepath="$PROJECT_DIR$/.idea/agent.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/api.iml" filepath="$PROJECT_DIR$/.idea/api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/bot@1.iml" filepath="$PROJECT_DIR$/.idea/bot@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/bot.iml" filepath="$PROJECT_DIR$/.idea/bot.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/minitoro.iml" filepath="$PROJECT_DIR$/.idea/minitoro.iml" />
     </modules>
   </component>
