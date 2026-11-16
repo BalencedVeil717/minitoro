@@ -1,6 +1,7 @@
 import os
 import json
 import tempfile
+import nbtlib
 from pathlib import Path
 
 

@@ -1,111 +1,68 @@
 import os
 import discord
-import httpx
-from discord import app_commands
-from discord.ext import commands
-from dotenv import load_dotenv
-from pathlib import Path
 
-from bot import workers
+from pathlib import Path
+from discord.ext import commands
+from discord import app_commands
+from dotenv import load_dotenv
 
 load_dotenv()
 
-intents = discord.Intents.default()
-bot = commands.Bot(command_prefix="!", intents=intents)
-tree = bot.tree
 
-if not os.getenv("MINITORO_MINECRAFT_DIR", ""):
-    raise FileNotFoundError("Cannot load minecraft directory")
-minecraft_dir = Path(os.getenv("MINITORO_MINECRAFT_DIR", "")).resolve()
-if not minecraft_dir.is_dir():
-    raise RuntimeError(f"Invalid minecraft directory: {minecraft_dir}")
+class MinitoroBot(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            command_prefix="!",
+            intents=discord.Intents.default()
+        )
+        self.minecraft_dir = Path(
+            os.getenv("MINITORO_MINECRAFT_DIR", "")
+        ).resolve()
+
+        if not os.getenv("MINITORO_MINECRAFT_DIR"):
+            raise RuntimeError("MINITORO_MINECRAFT_DIR not set")
+
+        if not self.minecraft_dir.is_dir():
+            raise FileNotFoundError(
+                f"Minecraft directory not found: {self.minecraft_dir}"
+            )
+
+    async def setup_hook(self):
+        await bot.load_extension("bot.commands.ping")
+        await bot.load_extension("bot.commands.metrics")
+        await bot.load_extension("bot.commands.reload_hashes")
+
+        await self.tree.sync()
+
+
+bot = MinitoroBot()
 
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-    await tree.sync()
 
 
-@tree.command(name="ping", description="Pong!")
-async def ping(interaction: discord.Interaction) -> None:
-    await interaction.response.defer()
-    await interaction.followup.send(f"Pong! {round(bot.latency * 1000)}ms")
-
-
-@tree.command(name="metrics", description="Show server metrics")
-async def metrics(interaction: discord.Interaction) -> None:
-    await interaction.response.defer()
-
-    try:
-        async with httpx.AsyncClient(timeout=5) as client:
-            lastcall_response = await client.get("http://127.0.0.1:8000/lastcall")
-            lastcall_response.raise_for_status()
-
-            try:
-                lastcall_data = lastcall_response.json()
-            except ValueError:
-                await interaction.followup.send("API returned an invalid response")
-                return
-            if not isinstance(lastcall_data, dict) or lastcall_data.get("status") != "ok":
-                await interaction.followup.send("Couldn't fetch metrics, agent is not responding or still booting up.")
-                return
-
-            metric_response = await client.get("http://127.0.0.1:8000/metrics")
-            metric_response.raise_for_status()
-            try:
-                data = metric_response.json()
-                message = (
-                    "> ## M E T R I C S\n"
-                    f"- **CPU:** `{data['cpu_percentage']}%`\n"
-                    f"- **Memory:** `{data['ram_used']}/{data['ram_total']}GB`\n"
-                    f"- **Disk:** `{data['disk_percentage']}%`\n"
-                )
-            except ValueError:
-                await interaction.followup.send("API returned an invalid response")
-                return
-            except KeyError:
-                message = "Couldn't fetch metrics, invalid response."
-
-    except httpx.HTTPError as err:
-        print(f"Error getting metrics: {err}")
-        await interaction.followup.send(f"Couldn't fetch metrics, api blocked")
-        return
-
-    await interaction.followup.send(message)
-
-
-async def player_name_autocomplete(interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-    players = await workers.get_players(minecraft_dir)
-    return [app_commands.Choice(name=player, value=player) for player in players if
-            player.lower().startswith(current.lower())][:25]
-
-
-async def is_owner(interaction: discord.Interaction) -> bool:
-    return interaction.user.id == 903600880580968488
-
-
-@tree.command(name="reload_hashes", description="Reload the uuid for players")
-@app_commands.check(is_owner)
-async def reload_hashes(interaction: discord.Interaction) -> None:
-    await interaction.response.defer(ephemeral=True)
-    try:
-        await workers.reload_uuid(minecraft_dir)
-        await interaction.followup.send(f"Successfully reloaded hashes for `{minecraft_dir}`", ephemeral=True)
-    except Exception as err:
-        await interaction.followup.send(f"Error reloading hashes for `{minecraft_dir}`\nError: {err}", ephemeral=True)
-
-
-@tree.error
-async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError) -> None:
+@bot.tree.error
+async def on_app_command_error(
+        interaction: discord.Interaction,
+        error: app_commands.AppCommandError
+):
     if isinstance(error, app_commands.CheckFailure):
-        await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
+        message = "You are not authorized to use this command."
     else:
         print(f"Error occurred in a command: {error}")
-        await interaction.followup.send("Error executing command, contact dev.", ephemeral=True)
+        message = "Error executing command, contact dev."
+
+    if interaction.response.is_done():
+        await interaction.followup.send(message, ephemeral=True)
+    else:
+        await interaction.response.send_message(message, ephemeral=True)
 
 
-try:
-    bot.run(token=os.getenv("BOT_TOKEN"))
-except Exception as e:
-    print(f"Couldn't run bot {e}")
+token = os.getenv("BOT_TOKEN")
+
+if not token:
+    raise RuntimeError("BOT_TOKEN not set")
+
+bot.run(token)
