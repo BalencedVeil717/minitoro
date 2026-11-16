@@ -13,7 +13,7 @@ class MinitoroBot(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix="!",
-            intents=discord.Intents.default()
+            intents=discord.Intents.none()
         )
         self.minecraft_dir = Path(
             os.getenv("MINITORO_MINECRAFT_DIR", "")
