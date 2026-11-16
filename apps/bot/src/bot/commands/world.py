@@ -12,23 +12,22 @@ class World(commands.Cog):
         await interaction.response.defer()
         from bot.workers import get_dat
 
-        world_border = await get_dat(self.bot.minecraft_dir / "world-data" / "world_border.dat")
-        world_clocks = await get_dat(self.bot.minecraft_dir / "world-data" / "world_clocks.dat")
-        world_gen_settings = await get_dat(self.bot.minecraft_dir / "world-data" / "world_gen_settings.dat")
+        try:
+            world_clocks = await get_dat(self.bot.minecraft_dir / "world-data" / "world_clocks.dat")
+            weather = await get_dat(self.bot.minecraft_dir / "world-data" / "weather.dat")
+        except Exception as e:
+            print(f"Error getting world_clocks, weather dat files: {e}")
+            raise e
 
-        world_name = "RasMalai_2.0"
-        overworld_age = int(world_clocks["data"]["minecraft:overworld"]["total_ticks"]) // 24000
-        end_age = int(world_clocks["data"]["minecraft:the_end"]["total_ticks"]) // 24000
-        border = int(world_border["data"]["lerp_target"])
+        weather_data = weather["data"]
+        clock_data = world_clocks["data"]
 
-        weather = await get_dat(self.bot.minecraft_dir / "world-data" / "weather.dat")
-        data = weather["data"]
-        border_center_x = float(world_border["data"]['center_x'])
-        border_center_z = float(world_border["data"]['center_z'])
-
-        raining = bool(data["raining"])
-        thundering = bool(data["thundering"])
-        clear_time = int(data["clear_weather_time"])
+        world_name = "MasRalai_2.0"
+        overworld_age = int(clock_data["minecraft:overworld"]["total_ticks"]) // 24000
+        end_age = int(clock_data["minecraft:the_end"]["total_ticks"]) // 24000
+        raining = bool(weather_data["raining"])
+        thundering = bool(weather_data["thundering"])
+        clear_time = int(weather_data["clear_weather_time"])
 
         if clear_time > 0:
             current_weather = "Clear"
@@ -40,8 +39,8 @@ class World(commands.Cog):
             current_weather = "Clear"
 
         embed = discord.Embed(
-            title="World Information",
-            color=discord.Color.blurple()
+            title=world_name,
+            color=discord.Color.yellow()
         )
 
         embed.add_field(
@@ -56,15 +55,6 @@ class World(commands.Cog):
         embed.add_field(
             name="Current Weather",
             value=f"> Condition: `{current_weather}`\n> Raining: `{raining}`\n> Thundering: `{thundering}`",
-            inline=False
-        )
-
-        embed.add_field(
-            name="World Border",
-            value=(
-                f"> Diameter: `{border:,} blocks`\n"
-                f"> Center: `{border_center_x}, {border_center_z}`\n"
-            ),
             inline=False
         )
 
