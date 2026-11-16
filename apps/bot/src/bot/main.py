@@ -31,6 +31,7 @@ class MinitoroBot(commands.Bot):
         await bot.load_extension("bot.commands.ping")
         await bot.load_extension("bot.commands.metrics")
         await bot.load_extension("bot.commands.reload_hashes")
+        await bot.load_extension("bot.commands.world")
 
         await self.tree.sync()
 
