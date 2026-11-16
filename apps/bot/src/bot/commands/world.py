@@ -8,7 +8,7 @@ class World(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="world", description="Provides world stats")
-    async def world(self, interaction: discord.Interaction):
+    async def world(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         from bot.workers import get_dat
 
