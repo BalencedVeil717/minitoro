@@ -7,7 +7,7 @@ async def is_owner(interaction: discord.Interaction) -> bool:
     return interaction.user.id == 903600880580968488
 
 
-class Core(commands.Cog):
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

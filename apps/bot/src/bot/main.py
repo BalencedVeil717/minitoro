@@ -28,9 +28,9 @@ class MinitoroBot(commands.Bot):
             )
 
     async def setup_hook(self):
-        await bot.load_extension("bot.commands.ping")
+        await bot.load_extension("bot.commands.general")
         await bot.load_extension("bot.commands.metrics")
-        await bot.load_extension("bot.commands.reload_hashes")
+        await bot.load_extension("bot.commands.admin")
         await bot.load_extension("bot.commands.world")
 
         await self.tree.sync()
