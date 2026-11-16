@@ -8,16 +8,14 @@ async def reload_uuid(minecraft_dir) -> None:
     usercache_file = minecraft_dir / "usercache.json"
     player_hash_file = minecraft_dir / "player_hash.json"
 
-    if not usercache_file.is_file() or not player_hash_file.is_file():
-        raise FileNotFoundError(f"Files not found {player_hash_file}, {usercache_file}")
+    if not usercache_file.is_file():
+        raise FileNotFoundError(f"usercache.json not found: {usercache_file}")
 
-    try:
-        usercache = json.loads(usercache_file.read_text())
-    except json.decoder.JSONDecodeError:
-        usercache = []
-    try:
-        player_hash = json.loads(player_hash_file.read_text())
-    except json.decoder.JSONDecodeError:
+    usercache = json.loads(usercache_file.read_text(encoding="utf-8"))
+
+    if player_hash_file.is_file():
+        player_hash = json.loads(player_hash_file.read_text(encoding="utf-8"))
+    else:
         player_hash = {}
 
     for data in usercache:
@@ -46,7 +44,7 @@ async def get_players(minecraft_dir: Path) -> list[str]:
         return []
 
     try:
-        players = json.loads(player_hash_file.read_text()).keys()
+        players = json.loads(player_hash_file.read_text(encoding="utf-8")).keys()
     except json.decoder.JSONDecodeError:
         print("Cannot load player_hash.json")
         players = []
