@@ -31,6 +31,26 @@ class Metrics(commands.Cog):
                 metric_response.raise_for_status()
                 try:
                     data = metric_response.json()
+                    embed = discord.Embed(
+                        title="M E T R I C S",
+                        color=discord.Color.orange()
+                    )
+
+                    embed.add_field(
+                        name="**CPU:**",
+                        value=f"{data['cpu_percentage']}%",
+                    )
+
+                    embed.add_field(
+                        name="**Memory:**",
+                        value=f"`{data['ram_used']}/{data['ram_total']}GB`"
+                    )
+
+                    embed.add_field(
+                        name="**Disk:**",
+                        value=f"`{data['disk_percentage']}%`"
+                    )
+
                     message = (
                         "> ## M E T R I C S\n"
                         f"- **CPU:** `{data['cpu_percentage']}%`\n"
@@ -42,13 +62,19 @@ class Metrics(commands.Cog):
                     return
                 except KeyError:
                     message = "Couldn't fetch metrics, invalid response."
+                    embed = discord.Embed(
+                        title="Error",
+                        color=discord.Color.red(),
+                        description="Couldn't fetch metrics, invalid response."
+                    )
 
         except httpx.HTTPError as err:
             print(f"Error getting metrics: {err}")
             await interaction.followup.send(f"Couldn't fetch metrics, api blocked")
             return
 
-        await interaction.followup.send(message)
+        await interaction.followup.send(embed=embed)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Metrics(bot))
