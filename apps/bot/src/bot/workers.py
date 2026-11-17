@@ -54,4 +54,4 @@ async def get_players(minecraft_dir: Path) -> list[str]:
 
 
 async def get_dat(dat_path: Path) -> dict:
-    return nbtlib.load(dat_path)
+    return nbtlib.load(dat_path).unpack()
