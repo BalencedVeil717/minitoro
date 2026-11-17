@@ -4,9 +4,19 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bot.commands.admin import Admin
-from bot.workers import get_dat
+from bot.workers import get_players
 
+
+async def player_name_autocomplete(
+        self,
+        interaction: discord.Interaction,
+        current: str
+) -> list[app_commands.Choice[str]]:
+    return [
+        app_commands.Choice(name=player, value=player)
+        for player in await get_players(self.bot.minecraft_dir)
+        if current.lower() in player.lower()
+    ][:25]
 
 def get_category(stats: dict, category: str) -> dict:
     data = stats.get(category, {})
@@ -50,6 +60,7 @@ class Players(commands.Cog):
 
     @app_commands.command(name="whois", description="Get info about a player")
     @app_commands.describe(player_name="Username of the player")
+    @app_commands.autocomplete(player_name=player_name_autocomplete)
     async def whois(self, interaction: discord.Interaction, player_name: str) -> None:
         await interaction.response.defer()
 
@@ -150,7 +161,7 @@ class Players(commands.Cog):
         }
 
         embed = discord.Embed(
-            title=player_name,
+            title=f"WhoIs - {player_name}",
             color=discord.Color.blue()
         )
 
