@@ -6,18 +6,6 @@ from discord.ext import commands
 
 from bot.workers import get_players
 
-
-async def player_name_autocomplete(
-        self,
-        interaction: discord.Interaction,
-        current: str
-) -> list[app_commands.Choice[str]]:
-    return [
-        app_commands.Choice(name=player, value=player)
-        for player in await get_players(self.bot.minecraft_dir)
-        if current.lower() in player.lower()
-    ][:25]
-
 def get_category(stats: dict, category: str) -> dict:
     data = stats.get(category, {})
     return data if isinstance(data, dict) else {}
@@ -57,6 +45,17 @@ def format_name(name: str) -> str:
 class Players(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    async def player_name_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> list[app_commands.Choice[str]]:
+        return [
+            app_commands.Choice(name=player, value=player)
+            for player in await get_players(self.bot.minecraft_dir)
+            if current.lower() in player.lower()
+        ][:25]
 
     @app_commands.command(name="whois", description="Get info about a player")
     @app_commands.describe(player_name="Username of the player")
